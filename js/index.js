@@ -1,95 +1,129 @@
-const establecimiento = "Bizzco Bakery";
-
-console.log(`¡Bienvenido a ${establecimiento}!`);
-
-let clientes = [];
-
-let nombre = prompt("Ingresa tu nombre completo");
-let telefono = prompt("Ingresa tu numero de telefono");
-let direccion = prompt("Ingresa tu direccion");
-
-let cliente = {
-    nombre: nombre,
-    telefono: telefono,
-    direccion: direccion
-};
-
-clientes.push(cliente);
-
-console.log("Datos del cliente:", cliente);
-
-//Productos disponibles
-const productos = [
-    {id: 1, nombre: "Cookies Red velvet", precio: 2500},
-    {id: 2, nombre: "Cookies Carrot cake", precio: 3000},
-    {id: 3, nombre: "Cookies Pistachio", precio: 3500},
-    {id: 4, nombre: "Cookies Doble chocolate", precio: 2000}
-];
-
-console.log("Productos disponibles:");
-productos.forEach(producto => {
-    console.log(`${producto.id}. ${producto.nombre} -$${producto.precio}`);
-});
-
-//Seleccion de productos y cantidad por el cliente
-let productosSeleccionados = [];
-
-for (let i = 0; i < productos.length; i++) {
-    let cantidad = parseInt(prompt(`¿Cuantos ${productos[i].nombre} deseas comprar?`));
-
-    //solo agregamos el producto si la cantidad es mayor a 0
-    if (cantidad > 0){
-        productosSeleccionados.push({
-            producto: productos[i],
-            cantidad: cantidad
-        });
-    }
-}
-
-console.log("Productos seleccionados:");
-productosSeleccionados.forEach(item => {
-    console.log(`${item.cantidad} x ${item.producto.nombre} - $${item.producto.precio * item.cantidad}`);
-})
-
-//Funcion para calcular el total
-
-function calcularTotal(productosSeleccionados) {
-    let total = 0;
-    productosSeleccionados.forEach(item => {
-        total += item.producto.precio * item.cantidad;
+// Lista de productos disponibles (reemplazar con las rutas de tus imágenes)
+const products = [
+    { id: 1, name: "Pink Cookie", price: 2300, imgSrc: "../images/cookies1.jpg" },
+    { id: 2, name: "Bizzco Cookie", price: 2000, imgSrc: "../images/cookies2.jpg" },
+    { id: 3, name: "Dubai Cookie", price: 3500, imgSrc: "../images/cookies3.jpg" },
+    { id: 4, name: "Caramel Cookie", price: 2800, imgSrc: "../images/cookies4.jpg"},
+  ];
+  
+  // Referencias al DOM
+  const productsContainer = document.getElementById("products");
+  const cartItemsContainer = document.getElementById("cart-items");
+  const clearCartButton = document.getElementById("clear-cart");
+  const emptyCartMessage = document.getElementById("empty-cart-message");
+  const totalPriceElement = document.getElementById("total-price");
+  
+  // Función para cargar los productos en el DOM
+  function loadProducts() {
+    products.forEach(product => {
+      const productElement = document.createElement("div");
+      productElement.classList.add("product");
+  
+      productElement.innerHTML = `
+        <img src="${product.imgSrc}" alt="${product.name}">
+        <p>${product.name}</p>
+        <p>$${product.price}</p>
+        <button data-id="${product.id}" class="add-to-cart">Agregar al Carrito</button>
+      `;
+  
+      productsContainer.appendChild(productElement);
     });
-
-    //Verificar si se aplica descuento
-
-    if (productosSeleccionados.length > 2 || productosSeleccionados.some(item => item.cantidad > 2)) {
-        console.log("¡Felicidades! Se ha aplicado un descuento del 15%. ");
-        total *= 0.85;
+  }
+  
+  // Función para obtener el carrito del localStorage
+  function getCartFromStorage() {
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    return cart ? cart : [];
+  }
+  
+  // Función para guardar el carrito en el localStorage
+  function saveCartToStorage(cart) {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+  
+  // Función para calcular el total del carrito
+  function calculateTotal() {
+    const cart = getCartFromStorage();
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }
+  
+  // Función para mostrar el carrito
+  function displayCart() {
+    const cart = getCartFromStorage();
+    cartItemsContainer.innerHTML = ""; // Limpiar el carrito antes de renderizar
+  
+    if (cart.length === 0) {
+      emptyCartMessage.style.display = "block";
+    } else {
+      emptyCartMessage.style.display = "none";
     }
-    return total;
-}
-
-//Total de la compra
-let totalCompra = calcularTotal(productosSeleccionados);
-
-console.log("Total de la compra (sin IVA): $" + totalCompra);
-
-//Calcular Iva 
-let iva = totalCompra * 0.21;
-console.log("IVA (21%): $" + iva);
-
-//Total con IVA
-let totalConIva = totalCompra + iva;
-console.log("Total con IVA: $" + totalConIva);
-
-// Mostrar el resumen de la compra
-console.log("\nResumen de tu compra:");
-console.log(`Nombre: ${cliente.nombre}`);
-console.log(`Teléfono: ${cliente.telefono}`);
-console.log(`Dirección: ${cliente.direccion}`);
-console.log("Productos comprados:");
-productosSeleccionados.forEach(item => {
-  console.log(`${item.cantidad} x ${item.producto.nombre} - $${item.producto.precio * item.cantidad}`);
-});
-console.log("Total sin IVA: $" + totalCompra);
-console.log("IVA: $" + iva);
-console.log("Total con IVA: $" + totalConIva);
+  
+    cart.forEach(item => {
+      const itemElement = document.createElement("li");
+      itemElement.innerHTML = `
+        ${item.name} - $${item.price} x${item.quantity}
+        <button class="remove-from-cart" data-id="${item.id}">Eliminar</button>
+      `;
+      cartItemsContainer.appendChild(itemElement);
+    });
+  
+    totalPriceElement.textContent = `Total: $${calculateTotal()}`;
+  }
+  
+  // Función para agregar un producto al carrito
+  function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const cart = getCartFromStorage();
+  
+    // Verificar si el producto ya está en el carrito
+    const productInCart = cart.find(item => item.id === product.id);
+    if (productInCart) {
+      productInCart.quantity += 1;  // Aumentar la cantidad
+    } else {
+      cart.push({...product, quantity: 1});
+    }
+  
+    saveCartToStorage(cart);
+    displayCart();
+  }
+  
+  // Función para eliminar un producto del carrito
+  function removeFromCart(productId) {
+    const cart = getCartFromStorage();
+    const updatedCart = cart.filter(item => item.id !== productId);
+    saveCartToStorage(updatedCart);
+    displayCart();
+  }
+  
+  // Función para vaciar el carrito
+  function clearCart() {
+    localStorage.removeItem("cart");
+    displayCart();
+  }
+  
+  // Event listeners para agregar productos al carrito
+  productsContainer.addEventListener("click", (event) => {
+    if (event.target.classList.contains("add-to-cart")) {
+      const productId = parseInt(event.target.getAttribute("data-id"));
+      addToCart(productId);
+    }
+  });
+  
+  // Event listener para vaciar el carrito
+  clearCartButton.addEventListener("click", clearCart);
+  
+  // Event listener para eliminar productos del carrito
+  cartItemsContainer.addEventListener("click", (event) => {
+    if (event.target.classList.contains("remove-from-cart")) {
+      const productId = parseInt(event.target.getAttribute("data-id"));
+      removeFromCart(productId);
+    }
+  });
+  
+  // Inicialización de la aplicación
+  function init() {
+    loadProducts();
+    displayCart(); // Mostrar el carrito cuando la página se carga
+  }
+  
+  init();
