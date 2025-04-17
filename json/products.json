@@ -46,5 +46,21 @@
       "category": "Cakes",
       "imgSrc": "../images/cake2.jpg",
       "stock": 2
+    },
+    {
+      "id": 7,
+      "name": "Red velvet Cake",
+      "price": 7000,
+      "category": "Cakes",
+      "imgSrc": "../images/cake3.jpg",
+      "stock": 2
+    },
+    {
+      "id": 8,
+      "name": "Carrot Cake",
+      "price": 8000,
+      "category": "Cakes",
+      "imgSrc": "../images/cake4.jpg",
+      "stock": 5
     }
   ]

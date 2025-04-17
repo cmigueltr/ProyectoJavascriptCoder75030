@@ -44,6 +44,14 @@ function addEventListeners() {
     document.getElementById("payment-form").style.display = "block";
   });
 
+  // Event listener para eliminar productos individuales del carrito
+  document.getElementById("cart-items").addEventListener("click", (event) => {
+    if (event.target.classList.contains("remove-from-cart")) {
+      const productId = parseInt(event.target.getAttribute("data-id"));
+      removeFromCart(productId);
+    }
+  });
+
   // Event listener para el tipo de entrega
   document.getElementById("delivery-type").addEventListener("change", (event) => {
     const addressContainer = document.getElementById("address-container");
