@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/styles.css">
-    <title>Bizzco Bakery</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert -->
     <script defer src="../js/index.js"></script>
+    <title>Bizzco Bakery</title>
 </head>
 <body>
     <h1>Bizzco Bakery & Cake Shop</h1>
-  
+    
     <!-- Lista de productos -->
     <div id="products"></div>
-  
+
     <!-- Carrito de compras -->
     <div id="cart">
       <h2>Tu Carrito</h2>
@@ -20,6 +21,52 @@
       <p id="empty-cart-message" style="display: none;">El carrito está vacío.</p>
       <p id="total-price">Total: $0</p>
       <button id="clear-cart">Vaciar Carrito</button>
+      <button id="finalize-purchase">Finalizar Compra</button>
+    </div>
+
+    <!-- Formulario de pago flotante -->
+    <div id="payment-form" style="display: none;">
+        <h3>Detalles de pago</h3>
+        <form id="paymentForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" required>
+
+            <label for="phone">Teléfono:</label>
+            <input type="tel" id="phone" required placeholder="Ej: 11 1234-5678 o +54 9 11 1234-5678">
+
+            <label for="delivery-type">Tipo de entrega:</label>
+            <select id="delivery-type" required>
+                <option value="pickup">Retiro en tienda</option>
+                <option value="delivery">Envío a domicilio (+$2,500)</option>
+            </select>
+
+            <div id="address-container" style="display: none;">
+                <label for="address">Dirección de envío:</label>
+                <input type="text" id="address" required>
+            </div>
+
+            <label for="payment-method">Método de pago:</label>
+            <select id="payment-method" required>
+                <option value="card">Tarjeta de crédito</option>
+                <option value="cash">Efectivo</option>
+            </select>
+
+            <div id="card-details" style="display: none;">
+                <label for="card-number">Número de tarjeta:</label>
+                <input type="text" id="card-number" placeholder="XXXX-XXXX-XXXX-XXXX">
+
+                <label for="card-expiry">Fecha de vencimiento:</label>
+                <input type="text" id="card-expiry" placeholder="MM/AA">
+
+                <label for="card-cvc">CVC:</label>
+                <input type="text" id="card-cvc" placeholder="XXX">
+            </div>
+
+            <button type="submit">Pagar</button>
+        </form>
     </div>
 </body>
 </html>
